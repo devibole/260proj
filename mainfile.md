@@ -899,7 +899,7 @@ Primary Caregiver Education Level
 We generate some explanatory plots based on descriptive variables and
 the outcome, dental care utilization within the past 12 months.
 
-![](predictingdentalutil_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](predictingdentalutil_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![](figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ## Results
 
@@ -1207,9 +1207,9 @@ edu3
 </tbody>
 </table>
 
-![](predictingdentalutil_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](predictingdentalutil_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Here, we see that the sensitivity of this model is incredibly low. The
 accuracy is quite high and the specificity is quite high as well. We
@@ -1221,7 +1221,7 @@ variables. We build a confusion matrix and visualize this matrix. The
 function also presents the sensitivity, accuracy, specificity of our
 model. We also plot the top 20 important features based on Gini index.
 
-![](predictingdentalutil_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](predictingdentalutil_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![](figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](figure-gfm/unnamed-chunk-10-2.png)<!-- -->
 Here we see that the sensitivity of this model has improved slightly but
 it is still quite low. The accuracy has gone up slightly as well but was
 high to begin with. We will discuss this further in the conclusion
@@ -1232,7 +1232,7 @@ using the 20 most important features jsut to verify that our algorithm
 is working sensibly. First, we use a function to draw a dendrogram. Then
 we take a sample of 100 rows randomly and then plot the dendrogram.
 
-![](predictingdentalutil_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 It appears that our random forest and overall data feeding mechanism is
 successful.
