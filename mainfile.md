@@ -1,9 +1,11 @@
-260 Project
+Predicting Dental Care Utilization (270 Final Project)
 ================
 Devika Godbole
-2022-12-13
+2022-12-14
 
-# Predicting Dental Care Utilization
+``` r
+knitr::opts_chunk$set(echo = FALSE)
+```
 
 ## Introduction
 
@@ -80,355 +82,826 @@ variable along with typical sociodemographic covariates (age, sex,
 race/ethnicity, federal poverty level, state of residence, region of
 residence, health insurance coverage, and primary caregiver’s marital
 status, and SHCN). The random forest algorithm had a larger selection of
-available features however. Confusion matrixes were created for the test
+available features however. Confusion matrices were created for the test
 set predictions for each model and the metrics were compared.
 
 ## Analysis
 
-``` r
-library(haven)
-library(knitr)
-library(kableExtra)
-library(dplyr)
-```
+We begin with a Table 1 to understand the population.
 
-    ## 
-    ## Attaching package: 'dplyr'
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+ 
+</th>
+<th style="text-align:left;">
+Did Not Utilize
+</th>
+<th style="text-align:left;">
+Utilized
+</th>
+<th style="text-align:left;">
+Overall
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+(N=5786)
+</td>
+<td style="text-align:left;">
+(N=33838)
+</td>
+<td style="text-align:left;">
+(N=39738)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Special Health Care Needs Status
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  No SHCN
+</td>
+<td style="text-align:left;">
+4622 (79.9%)
+</td>
+<td style="text-align:left;">
+25170 (74.4%)
+</td>
+<td style="text-align:left;">
+29874 (75.2%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Yes SCHN
+</td>
+<td style="text-align:left;">
+1164 (20.1%)
+</td>
+<td style="text-align:left;">
+8668 (25.6%)
+</td>
+<td style="text-align:left;">
+9864 (24.8%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Age (yrs)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Mean (SD)
+</td>
+<td style="text-align:left;">
+7.64 (5.39)
+</td>
+<td style="text-align:left;">
+10.5 (4.49)
+</td>
+<td style="text-align:left;">
+10.1 (4.75)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Median \[Min, Max\]
+</td>
+<td style="text-align:left;">
+6.00 \[2.00, 17.0\]
+</td>
+<td style="text-align:left;">
+11.0 \[2.00, 17.0\]
+</td>
+<td style="text-align:left;">
+11.0 \[2.00, 17.0\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Federal Poverty Level
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Mean (SD)
+</td>
+<td style="text-align:left;">
+242 (129)
+</td>
+<td style="text-align:left;">
+292 (123)
+</td>
+<td style="text-align:left;">
+285 (125)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Median \[Min, Max\]
+</td>
+<td style="text-align:left;">
+239 \[50.0, 400\]
+</td>
+<td style="text-align:left;">
+348 \[50.0, 400\]
+</td>
+<td style="text-align:left;">
+332 \[50.0, 400\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sex of Adolescent
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Male
+</td>
+<td style="text-align:left;">
+2651 (45.8%)
+</td>
+<td style="text-align:left;">
+16529 (48.8%)
+</td>
+<td style="text-align:left;">
+19226 (48.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Female
+</td>
+<td style="text-align:left;">
+3135 (54.2%)
+</td>
+<td style="text-align:left;">
+17309 (51.2%)
+</td>
+<td style="text-align:left;">
+20512 (51.6%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Insurance Coverage Level
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  1
+</td>
+<td style="text-align:left;">
+1884 (32.6%)
+</td>
+<td style="text-align:left;">
+7738 (22.9%)
+</td>
+<td style="text-align:left;">
+9645 (24.3%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  2
+</td>
+<td style="text-align:left;">
+2979 (51.5%)
+</td>
+<td style="text-align:left;">
+23570 (69.7%)
+</td>
+<td style="text-align:left;">
+26583 (66.9%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  3
+</td>
+<td style="text-align:left;">
+231 (4.0%)
+</td>
+<td style="text-align:left;">
+1248 (3.7%)
+</td>
+<td style="text-align:left;">
+1480 (3.7%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  4
+</td>
+<td style="text-align:left;">
+649 (11.2%)
+</td>
+<td style="text-align:left;">
+1143 (3.4%)
+</td>
+<td style="text-align:left;">
+1795 (4.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+43 (0.7%)
+</td>
+<td style="text-align:left;">
+139 (0.4%)
+</td>
+<td style="text-align:left;">
+235 (0.6%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Race/Ethnicity
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  White Non-Hispanic
+</td>
+<td style="text-align:left;">
+3382 (58.5%)
+</td>
+<td style="text-align:left;">
+22823 (67.4%)
+</td>
+<td style="text-align:left;">
+26255 (66.1%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Black Non-Hispanic
+</td>
+<td style="text-align:left;">
+530 (9.2%)
+</td>
+<td style="text-align:left;">
+2194 (6.5%)
+</td>
+<td style="text-align:left;">
+2741 (6.9%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  American Indian Alaskan Native Non-Hispanic
+</td>
+<td style="text-align:left;">
+46 (0.8%)
+</td>
+<td style="text-align:left;">
+211 (0.6%)
+</td>
+<td style="text-align:left;">
+258 (0.6%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Asian Non-Hispanic
+</td>
+<td style="text-align:left;">
+432 (7.5%)
+</td>
+<td style="text-align:left;">
+1760 (5.2%)
+</td>
+<td style="text-align:left;">
+2205 (5.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Native Hawaiian Other Pacific Islander Non-Hispanic
+</td>
+<td style="text-align:left;">
+26 (0.4%)
+</td>
+<td style="text-align:left;">
+81 (0.2%)
+</td>
+<td style="text-align:left;">
+107 (0.3%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Hispanic
+</td>
+<td style="text-align:left;">
+939 (16.2%)
+</td>
+<td style="text-align:left;">
+4389 (13.0%)
+</td>
+<td style="text-align:left;">
+5357 (13.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Other/Missing
+</td>
+<td style="text-align:left;">
+431 (7.4%)
+</td>
+<td style="text-align:left;">
+2380 (7.0%)
+</td>
+<td style="text-align:left;">
+2815 (7.1%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Primary Caregiver Marital Status
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Married/Living with Partner
+</td>
+<td style="text-align:left;">
+4393 (75.9%)
+</td>
+<td style="text-align:left;">
+26928 (79.6%)
+</td>
+<td style="text-align:left;">
+31374 (79.0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Single/Never Married
+</td>
+<td style="text-align:left;">
+908 (15.7%)
+</td>
+<td style="text-align:left;">
+4764 (14.1%)
+</td>
+<td style="text-align:left;">
+5684 (14.3%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Divorced/Widowed/Separated
+</td>
+<td style="text-align:left;">
+243 (4.2%)
+</td>
+<td style="text-align:left;">
+1149 (3.4%)
+</td>
+<td style="text-align:left;">
+1398 (3.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+242 (4.2%)
+</td>
+<td style="text-align:left;">
+997 (2.9%)
+</td>
+<td style="text-align:left;">
+1282 (3.2%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Region
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Northeast
+</td>
+<td style="text-align:left;">
+816 (14.1%)
+</td>
+<td style="text-align:left;">
+4892 (14.5%)
+</td>
+<td style="text-align:left;">
+5728 (14.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Midwest
+</td>
+<td style="text-align:left;">
+717 (12.4%)
+</td>
+<td style="text-align:left;">
+4900 (14.5%)
+</td>
+<td style="text-align:left;">
+5633 (14.2%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  South
+</td>
+<td style="text-align:left;">
+1391 (24.0%)
+</td>
+<td style="text-align:left;">
+7912 (23.4%)
+</td>
+<td style="text-align:left;">
+9322 (23.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  West
+</td>
+<td style="text-align:left;">
+1708 (29.5%)
+</td>
+<td style="text-align:left;">
+8817 (26.1%)
+</td>
+<td style="text-align:left;">
+10555 (26.6%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+1154 (19.9%)
+</td>
+<td style="text-align:left;">
+7317 (21.6%)
+</td>
+<td style="text-align:left;">
+8500 (21.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Primary Language Spoken at Home
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  English is primary language
+</td>
+<td style="text-align:left;">
+5074 (87.7%)
+</td>
+<td style="text-align:left;">
+31545 (93.2%)
+</td>
+<td style="text-align:left;">
+36712 (92.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Spanish is primary language
+</td>
+<td style="text-align:left;">
+327 (5.7%)
+</td>
+<td style="text-align:left;">
+1146 (3.4%)
+</td>
+<td style="text-align:left;">
+1480 (3.7%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Another language is primary language
+</td>
+<td style="text-align:left;">
+357 (6.2%)
+</td>
+<td style="text-align:left;">
+1035 (3.1%)
+</td>
+<td style="text-align:left;">
+1402 (3.5%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+28 (0.5%)
+</td>
+<td style="text-align:left;">
+112 (0.3%)
+</td>
+<td style="text-align:left;">
+144 (0.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Primary Caregiver Employment Level
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Not employed
+</td>
+<td style="text-align:left;">
+1490 (25.8%)
+</td>
+<td style="text-align:left;">
+6506 (19.2%)
+</td>
+<td style="text-align:left;">
+8018 (20.2%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  At least 1 parent employed
+</td>
+<td style="text-align:left;">
+4042 (69.9%)
+</td>
+<td style="text-align:left;">
+26263 (77.6%)
+</td>
+<td style="text-align:left;">
+30354 (76.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+254 (4.4%)
+</td>
+<td style="text-align:left;">
+1069 (3.2%)
+</td>
+<td style="text-align:left;">
+1366 (3.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mental
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Mean (SD)
+</td>
+<td style="text-align:left;">
+2.13 (0.975)
+</td>
+<td style="text-align:left;">
+2.01 (0.881)
+</td>
+<td style="text-align:left;">
+2.02 (0.896)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Median \[Min, Max\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+237 (4.1%)
+</td>
+<td style="text-align:left;">
+969 (2.9%)
+</td>
+<td style="text-align:left;">
+1249 (3.1%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Primary Caregiver Physical Health Level
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Mean (SD)
+</td>
+<td style="text-align:left;">
+2.26 (0.934)
+</td>
+<td style="text-align:left;">
+2.11 (0.873)
+</td>
+<td style="text-align:left;">
+2.14 (0.884)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Median \[Min, Max\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+<td style="text-align:left;">
+2.00 \[1.00, 5.00\]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Missing
+</td>
+<td style="text-align:left;">
+239 (4.1%)
+</td>
+<td style="text-align:left;">
+976 (2.9%)
+</td>
+<td style="text-align:left;">
+1259 (3.2%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Primary Caregiver Education Level
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  Less than high school
+</td>
+<td style="text-align:left;">
+297 (5.1%)
+</td>
+<td style="text-align:left;">
+769 (2.3%)
+</td>
+<td style="text-align:left;">
+1074 (2.7%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  High school
+</td>
+<td style="text-align:left;">
+1198 (20.7%)
+</td>
+<td style="text-align:left;">
+4122 (12.2%)
+</td>
+<td style="text-align:left;">
+5342 (13.4%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+  More than high school
+</td>
+<td style="text-align:left;">
+4291 (74.2%)
+</td>
+<td style="text-align:left;">
+28947 (85.5%)
+</td>
+<td style="text-align:left;">
+33322 (83.9%)
+</td>
+</tr>
+</tbody>
+</table>
 
-    ## The following object is masked from 'package:kableExtra':
-    ## 
-    ##     group_rows
+We generate some explanatory plots based on descriptive variables and
+the outcome, dental care utilization within the past 12 months.
 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
-library(car)
-```
-
-    ## Loading required package: carData
-
-    ## 
-    ## Attaching package: 'car'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
-
-``` r
-library(jtools)
-library(ggplot2)
-library(ggpubr)
-```
-
-    ## Registered S3 methods overwritten by 'broom':
-    ##   method            from  
-    ##   tidy.glht         jtools
-    ##   tidy.summary.glht jtools
-
-``` r
-library(caret)
-```
-
-    ## Loading required package: lattice
-
-``` r
-library(randomForest)
-```
-
-    ## randomForest 4.7-1.1
-
-    ## Type rfNews() to see new features/changes/bug fixes.
-
-    ## 
-    ## Attaching package: 'randomForest'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     margin
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     combine
-
-``` r
-library(gbm)
-```
-
-    ## Loaded gbm 2.1.8.1
-
-``` r
-library(e1071)
-library(gtsummary)
-library(glmnet)
-```
-
-    ## Loading required package: Matrix
-
-    ## Loaded glmnet 4.1-4
-
-``` r
-library(vip)
-```
-
-    ## 
-    ## Attaching package: 'vip'
-
-    ## The following object is masked from 'package:utils':
-    ## 
-    ##     vi
-
-``` r
-library(pander)
-library(ConfusionTableR)
-library(table1)
-```
-
-    ## 
-    ## Attaching package: 'table1'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     units, units<-
-
-``` r
-nsch2020 <- read_sas("~/Downloads/nsch_2020_topical_SAS/nsch_2020_topical.sas7bdat",NULL)
-```
-
-``` r
-x_2020 <- nsch2020[, which(colMeans(is.na(nsch2020)) == 0)]
-x_2020$logit_Q1 <- ifelse(nsch2020$K4Q30_R == 1 | nsch2020$K4Q30_R == 2, 1, 0)
-```
-
-``` r
-x_2020$SC_CSHCN <- ifelse(nsch2020$SC_CSHCN==1, 1, 0)
-x_2020$age <- nsch2020$SC_AGE_YEARS
-x_2020$fpl <- nsch2020$FPL_I1
-x_2020$sex <- ifelse(nsch2020$SC_SEX == 1, 1, 0)
-
-x_2020$insurance <- ifelse(nsch2020$CURRCOV == 2, 4, 
-                 ifelse(nsch2020$K12Q12 == 1, 1, 
-                 ifelse(nsch2020$K12Q03 == 1 | nsch2020$K12Q04 == 1, 2, 
-                 ifelse(nsch2020$K11Q03R == 1 | nsch2020$HCCOVOTH == 1 | nsch2020$TRICARE == 1 | nsch2020$CURRCOV == 1, 3, 0))))
-
-x_2020$race <- ifelse(!nsch2020$SC_HISPANIC_R == 1, nsch2020$SC_RACE_R, 6)
-x_2020$married <- ifelse(nsch2020$A1_MARITAL == 1 |nsch2020$A1_MARITAL == 2, 1, ifelse(nsch2020$A1_MARITAL == 3 |nsch2020$A1_MARITAL == 4, 2, 3))
-
-x_2020$regionori <- nsch2020$FIPSST
-
-x_2020$region <- ifelse(x_2020$regionori %in% c(9, 23, 25, 33, 44, 50, 34, 36, 42), 1, ifelse(x_2020$regionori %in% c(18, 17, 26, 39, 55, 19, 31, 20, 38, 27, 46, 29), 2, ifelse(x_2020$regionori %in% c(10, 11, 12, 13, 24, 37, 45, 51, 54, 1, 21, 28, 47, 5, 22, 40, 48), 3, ifelse(x_2020$regionori %in% c(4, 8, 16, 35, 30, 49, 32, 56, 2, 6, 15, 41, 53), 4, 0))))
-
-x_2020$regionori <- NULL
-x_2020$region_ori <- NULL
-x_2020$nsch2020.SC_CSHCN <- NULL
-
-x_2020$HHID <- nsch2020$HHID
-x_2020$STRATUM <- nsch2020$STRATUM
-x_2020$FIPSST <- nsch2020$FIPSST
-x_2020$FWC <- nsch2020$FWC
-x_2020$lang <- nsch2020$HHLANGUAGE
-
-###additional variables for specifiying SHCN 
-x_2020$autism <- nsch2020$K2Q35A
-x_2020$downsyn <- nsch2020$K2Q35A
-x_2020$add <- nsch2020$K2Q31A
-
-x_2020$employ <- ifelse(nsch2020$A1_EMPLOYED == 1 | nsch2020$A1_EMPLOYED == 2, 1, 0)
-x_2020$married <- ifelse(nsch2020$A1_MARITAL == 1 |nsch2020$A1_MARITAL == 2, 1, ifelse(nsch2020$A1_MARITAL == 3 |nsch2020$A1_MARITAL == 4, 2, 3))
-x_2020$mental <- nsch2020$A1_MENTHEALTH
-x_2020$physical <- nsch2020$A1_PHYSHEALTH
-x_2020$edu <- nsch2020$HIGRADE
-
-x_2020$toothaches <- nsch2020$TOOTHACHES
-x_2020$cavities <- nsch2020$CAVITIES
-x_2020$allergies <- nsch2020$ALLERGIES
-x_2020$docroom <- nsch2020$DOCROOM
-x_2020$hcability <- nsch2020$HCABILITY
-
-x_2020 <- x_2020[x_2020$age > 1,]
-```
-
-``` r
-Q1_2020 <- x_2020 %>% filter(!is.na(SC_CSHCN) ) %>%
-  filter(!is.na(logit_Q1)) %>% 
-  mutate(cshcn= ifelse(SC_CSHCN==1, "CSHCN" , "Non-CSHCN")) %>% 
-  mutate(Q = ifelse(logit_Q1 ==1, "Yes", "No"))  
-```
-
-``` r
-PP2 <- Q1_2020 %>% ggplot(aes(x = as.factor(cshcn), fill= as.factor(Q))) +
-  geom_bar(position = position_stack(), aes(group = as.factor(Q))) +
-  geom_text(stat = "count", aes(label = after_stat(count)), position = position_stack(vjust = 0.5), size = 2.5) +
-  xlab("2020 During Pandemic")+ 
-  ggtitle("Dental Care Utilization in the Past Year")+
-  ylab("") 
-
-PP2
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-``` r
-PP1 <- Q1_2020 %>% filter(logit_Q1 == 1) %>% ggplot(aes(x=race, color = "red")) +
-  geom_bar() + 
-  geom_text(stat = "count", aes(label = after_stat(count)), position = position_stack(vjust = 0.5), size = 2.5) +
-  xlab("Ethnicity Response")+ 
-  ggtitle("Yes Dental Care Utilization in the Past Year by Race")+
-  ylab("") 
-P1<- PP1 + guides(fill=guide_legend(title="Answer"))
-
-PP2 <- Q1_2020 %>% filter(logit_Q1 == 0) %>% ggplot(aes(x=race, color = "lightblue")) +
-  geom_bar() + 
-  geom_text(stat = "count", aes(label = after_stat(count)), position = position_stack(vjust = 0.5), size = 2.5) +
-  xlab("Ethnicity Response")+ 
-  ggtitle("No Dental Care Utilization in the Past Year by Race")+
-  ylab("") 
-P2<- PP2 + guides(fill=guide_legend(title="Answer"))
-
-arrange1<- ggarrange(PP1, PP2,  common.legend = TRUE, legend = "bottom") 
-annotate_figure(arrange1,
-               top = text_grob("Dental Care Utilization in the Past Year", color = "orange", size = 13),
-               left = text_grob("Count", rot = 90)) 
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
-
-``` r
-set.seed(1212)
-nschAnalysis <- x_2020
-nschAnalysis$logit_Q1 <- as.factor(nschAnalysis$logit_Q1)
-nschAnalysis$sex <- as.factor(nschAnalysis$sex)
-nschAnalysis$insurance <- as.factor(nschAnalysis$insurance)
-nschAnalysis$race <- as.factor(nschAnalysis$race)
-nschAnalysis$married <- as.factor(nschAnalysis$married)
-nschAnalysis$region <- as.factor(nschAnalysis$region)
-nschAnalysis$lang <- as.factor(nschAnalysis$lang)
-
-nschAnalysis$edu <- as.factor(nschAnalysis$edu)
-nschAnalysis$mental <- as.factor(nschAnalysis$mental)
-nschAnalysis$physical <- as.factor(nschAnalysis$physical)
-nschAnalysis$employ<-as.factor(nschAnalysis$employ)
-nschAnalysis$lang <- as.factor(nschAnalysis$lang)
-
-nschAnalysis <- nschAnalysis[complete.cases(nschAnalysis),]
-dim(nschAnalysis)
-```
-
-    ## [1] 31229    65
-
-``` r
-table1(~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + edu  | logit_Q1, data=nschAnalysis)
-```
-
-    ##                                                          0                 1
-    ## 1                                                 (N=3936)         (N=27293)
-    ## 2                               SC_CSHCN                                    
-    ## 3                              Mean (SD)     0.226 (0.418)     0.280 (0.449)
-    ## 4                      Median [Min, Max]       0 [0, 1.00]       0 [0, 1.00]
-    ## 5       Age of Selected Child - In Years                                    
-    ## 6                              Mean (SD)       6.52 (5.11)       10.3 (4.55)
-    ## 7                      Median [Min, Max] 4.00 [2.00, 17.0] 11.0 [2.00, 17.0]
-    ## 8  Family Poverty Ratio, First Implicate                                    
-    ## 9                              Mean (SD)         260 (127)         300 (120)
-    ## 10                     Median [Min, Max]   267 [50.0, 400]   370 [50.0, 400]
-    ## 11                                   sex                                    
-    ## 12                                     0      1809 (46.0%)     13377 (49.0%)
-    ## 13                                     1      2127 (54.0%)     13916 (51.0%)
-    ## 14                             insurance                                    
-    ## 15                                     1      1257 (31.9%)      5950 (21.8%)
-    ## 16                                     2      2290 (58.2%)     19720 (72.3%)
-    ## 17                                     3        139 (3.5%)        934 (3.4%)
-    ## 18                                     4        250 (6.4%)        689 (2.5%)
-    ## 19                                  race                                    
-    ## 20                                     1      2457 (62.4%)     18986 (69.6%)
-    ## 21                                     2        303 (7.7%)       1598 (5.9%)
-    ## 22                                     3         35 (0.9%)        152 (0.6%)
-    ## 23                                     4        252 (6.4%)       1278 (4.7%)
-    ## 24                                     5         15 (0.4%)         58 (0.2%)
-    ## 25                                     6       573 (14.6%)      3256 (11.9%)
-    ## 26                                     7        301 (7.6%)       1965 (7.2%)
-    ## 27                               married                                    
-    ## 28                                     1      3245 (82.4%)     22606 (82.8%)
-    ## 29                                     2       547 (13.9%)      3801 (13.9%)
-    ## 30                                     3        144 (3.7%)        886 (3.2%)
-    ## 31                                region                                    
-    ## 32                                     0       527 (13.4%)      3846 (14.1%)
-    ## 33                                     1       537 (13.6%)      4168 (15.3%)
-    ## 34                                     2       963 (24.5%)      6415 (23.5%)
-    ## 35                                     3      1155 (29.3%)      7154 (26.2%)
-    ## 36                                     4       754 (19.2%)      5710 (20.9%)
-    ## 37                                  lang                                    
-    ## 38                                     1      3549 (90.2%)     25813 (94.6%)
-    ## 39                                     2        183 (4.6%)        764 (2.8%)
-    ## 40                                     3        204 (5.2%)        716 (2.6%)
-    ## 41                                employ                                    
-    ## 42                                     0      1016 (25.8%)      5354 (19.6%)
-    ## 43                                     1      2920 (74.2%)     21939 (80.4%)
-    ## 44                                   edu                                    
-    ## 45                                     1        114 (2.9%)        469 (1.7%)
-    ## 46                                     2       672 (17.1%)      2833 (10.4%)
-    ## 47                                     3      3150 (80.0%)     23991 (87.9%)
-    ##              Overall
-    ## 1          (N=31229)
-    ## 2                   
-    ## 3      0.273 (0.445)
-    ## 4        0 [0, 1.00]
-    ## 5                   
-    ## 6        9.85 (4.79)
-    ## 7  10.0 [2.00, 17.0]
-    ## 8                   
-    ## 9          295 (121)
-    ## 10   354 [50.0, 400]
-    ## 11                  
-    ## 12     15186 (48.6%)
-    ## 13     16043 (51.4%)
-    ## 14                  
-    ## 15      7207 (23.1%)
-    ## 16     22010 (70.5%)
-    ## 17       1073 (3.4%)
-    ## 18        939 (3.0%)
-    ## 19                  
-    ## 20     21443 (68.7%)
-    ## 21       1901 (6.1%)
-    ## 22        187 (0.6%)
-    ## 23       1530 (4.9%)
-    ## 24         73 (0.2%)
-    ## 25      3829 (12.3%)
-    ## 26       2266 (7.3%)
-    ## 27                  
-    ## 28     25851 (82.8%)
-    ## 29      4348 (13.9%)
-    ## 30       1030 (3.3%)
-    ## 31                  
-    ## 32      4373 (14.0%)
-    ## 33      4705 (15.1%)
-    ## 34      7378 (23.6%)
-    ## 35      8309 (26.6%)
-    ## 36      6464 (20.7%)
-    ## 37                  
-    ## 38     29362 (94.0%)
-    ## 39        947 (3.0%)
-    ## 40        920 (2.9%)
-    ## 41                  
-    ## 42      6370 (20.4%)
-    ## 43     24859 (79.6%)
-    ## 44                  
-    ## 45        583 (1.9%)
-    ## 46      3505 (11.2%)
-    ## 47     27141 (86.9%)
+![](predictingdentalutil_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](predictingdentalutil_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ## Results
-
-``` r
-intrain <- caret::createDataPartition(y = nschAnalysis$logit_Q1, p= 0.6, list = FALSE)
-training <- nschAnalysis[intrain,]
-testing <- nschAnalysis[-intrain,]
-```
 
 First, we conduct the logistic regression using glmnet. Glmnet is a
 package that can fit our logistic regression using cross validation,
@@ -438,26 +911,9 @@ likelihood. The regularization path is computed for the lasso or elastic
 net penalty at a grid of values (on the log scale) for the
 regularization parameter lambda. In our analysis, we set lambda =
 lambda.min which is the value that gives minimum mean cross-validated
-error.
-
-``` r
-##LOGISTIC REGRESSION
-x <- model.matrix(logit_Q1~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + edu, training)
-# Convert the outcome (class) to a numerical variable
-y <- ifelse(training$logit_Q1 == "1", 1, 0)
-cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
-plot(cv.lasso)
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
-
-``` r
-# Fit the final model on the training data
-model <- glmnet(x, y, alpha = 1, family = "binomial", lambda = cv.lasso$lambda.min)
-# Display regression coefficients
-c <- data.frame(coef.name = dimnames(coef(model))[[1]], coef.value = matrix(coef(model)))
-c[-2,]%>% kable()
-```
+error. The results here include the coefficients table for the logistic
+model. This is followed by a plot of variable importance and lastly, a
+confusion matrix generated after the model was tested.
 
 <table>
 <thead>
@@ -481,7 +937,7 @@ coef.value
 (Intercept)
 </td>
 <td style="text-align:right;">
--0.1658922
+-0.3072802
 </td>
 </tr>
 <tr>
@@ -492,7 +948,7 @@ coef.value
 SC_CSHCN
 </td>
 <td style="text-align:right;">
--0.0036404
+0.0859576
 </td>
 </tr>
 <tr>
@@ -503,7 +959,7 @@ SC_CSHCN
 age
 </td>
 <td style="text-align:right;">
-0.1835110
+0.1476277
 </td>
 </tr>
 <tr>
@@ -514,7 +970,7 @@ age
 fpl
 </td>
 <td style="text-align:right;">
-0.0016219
+0.0018344
 </td>
 </tr>
 <tr>
@@ -525,7 +981,7 @@ fpl
 sex1
 </td>
 <td style="text-align:right;">
--0.1213523
+-0.1340941
 </td>
 </tr>
 <tr>
@@ -536,7 +992,7 @@ sex1
 insurance2
 </td>
 <td style="text-align:right;">
-0.1917064
+0.2177592
 </td>
 </tr>
 <tr>
@@ -558,7 +1014,7 @@ insurance3
 insurance4
 </td>
 <td style="text-align:right;">
--0.8340855
+-1.1603889
 </td>
 </tr>
 <tr>
@@ -569,7 +1025,7 @@ insurance4
 race2
 </td>
 <td style="text-align:right;">
--0.1191744
+-0.0632778
 </td>
 </tr>
 <tr>
@@ -580,7 +1036,7 @@ race2
 race3
 </td>
 <td style="text-align:right;">
--0.4427671
+0.0000000
 </td>
 </tr>
 <tr>
@@ -591,7 +1047,7 @@ race3
 race4
 </td>
 <td style="text-align:right;">
--0.2397384
+-0.3248173
 </td>
 </tr>
 <tr>
@@ -602,7 +1058,7 @@ race4
 race5
 </td>
 <td style="text-align:right;">
-0.0000000
+-0.5579969
 </td>
 </tr>
 <tr>
@@ -613,7 +1069,7 @@ race5
 race6
 </td>
 <td style="text-align:right;">
--0.0770175
+-0.0469692
 </td>
 </tr>
 <tr>
@@ -646,7 +1102,7 @@ married2
 married3
 </td>
 <td style="text-align:right;">
--0.0571841
+-0.0113481
 </td>
 </tr>
 <tr>
@@ -657,7 +1113,7 @@ married3
 region1
 </td>
 <td style="text-align:right;">
-0.0000000
+0.0147113
 </td>
 </tr>
 <tr>
@@ -668,7 +1124,7 @@ region1
 region2
 </td>
 <td style="text-align:right;">
--0.0395036
+-0.1115738
 </td>
 </tr>
 <tr>
@@ -679,7 +1135,7 @@ region2
 region3
 </td>
 <td style="text-align:right;">
--0.0570257
+-0.1179911
 </td>
 </tr>
 <tr>
@@ -690,7 +1146,7 @@ region3
 region4
 </td>
 <td style="text-align:right;">
-0.1367816
+0.0286652
 </td>
 </tr>
 <tr>
@@ -701,7 +1157,7 @@ region4
 lang2
 </td>
 <td style="text-align:right;">
-0.0043683
+0.0000000
 </td>
 </tr>
 <tr>
@@ -712,7 +1168,7 @@ lang2
 lang3
 </td>
 <td style="text-align:right;">
--0.2435566
+-0.2441965
 </td>
 </tr>
 <tr>
@@ -723,7 +1179,7 @@ lang3
 employ1
 </td>
 <td style="text-align:right;">
-0.0071198
+0.0259575
 </td>
 </tr>
 <tr>
@@ -734,7 +1190,7 @@ employ1
 edu2
 </td>
 <td style="text-align:right;">
--0.2656263
+0.0000000
 </td>
 </tr>
 <tr>
@@ -745,140 +1201,38 @@ edu2
 edu3
 </td>
 <td style="text-align:right;">
-0.1890289
+0.4141469
 </td>
 </tr>
 </tbody>
 </table>
 
-``` r
-vip(model, num_features=10, geom="point")
-```
+![](predictingdentalutil_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](12-13project_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
-
-``` r
-# Make predictions on the test data
-x.test <- model.matrix(logit_Q1 ~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + edu, testing)
-probabilities <- model %>% predict(newx = x.test)
-predicted.classes <- as.factor(ifelse(probabilities > 0.5, 1, 0))
-predicted <- as.data.frame(cbind(class_preds=as.factor(predicted.classes), Class = as.factor(testing$logit_Q1)))
-predicted$class_preds <- as.factor(predicted$class_preds)
-predicted$Class <- as.factor(predicted$Class)
-ConfusionTableR::binary_visualiseR(train_labels = predicted$class_preds,
-                                   truth_labels= predicted$Class,
-                                   class_label1 = "Not utilized", 
-                                   class_label2 = "Utilized",
-                                   quadrant_col1 = "#28ACB4", 
-                                   quadrant_col2 = "#4397D2", 
-                                   custom_title = "Dental Care Utilization Confusion Matrix", 
-                                   text_col= "black")
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-10-3.png)<!-- -->
-
-``` r
-# prop.table(table(nschAnalysis$logit_Q1))
-# colnames(nschAnalysis)
-```
+![](predictingdentalutil_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Here, we see that the sensitivity of this model is incredibly low. The
 accuracy is quite high and the specificity is quite high as well. We
 will compare this to our random forest.
 
 Now, we build our random forest, including all potential covariates
-except for a few that were coded repetiviely, as well as ID type
+except for a few that were coded repetitively, as well as ID type
 variables. We build a confusion matrix and visualize this matrix. The
 function also presents the sensitivity, accuracy, specificity of our
 model. We also plot the top 20 important features based on Gini index.
 
-``` r
-##RANDOM FOREST 
-model_rf <- randomForest(logit_Q1 ~ . -SC_AGE_YEARS - HHID - FWC - STRATUM - FIPSST, data = training)
-pred <- predict(model_rf, testing)
-predicted <- as.data.frame(cbind(class_preds=as.factor(pred), Class = as.factor(testing$logit_Q1)))
-predicted$class_preds <- as.factor(predicted$class_preds)
-predicted$Class <- as.factor(predicted$Class)
-ConfusionTableR::binary_visualiseR(train_labels = predicted$class_preds,
-                                   truth_labels= predicted$Class,
-                                   class_label1 = "Not utilized", 
-                                   class_label2 = "Utilized",
-                                   quadrant_col1 = "#28ACB4", 
-                                   quadrant_col2 = "#4397D2", 
-                                   custom_title = "Dental Care Utilization Confusion Matrix", 
-                                   text_col= "black")
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-``` r
-feat_imp_df <- importance(model_rf) %>% 
-    data.frame() %>% 
-    mutate(feature = row.names(.)) %>% filter(rank(desc(MeanDecreaseGini))<=20)
-
-  # plot dataframe
-  ggplot(feat_imp_df, aes(x = reorder(feature, MeanDecreaseGini), 
-                         y = MeanDecreaseGini)) +
-    geom_bar(stat='identity') +
-    coord_flip() +
-    theme_classic() +
-    labs(
-      x     = "Feature",
-      y     = "Importance",
-      title = "Feature Importance: <Model>"
-    )
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
-
+![](predictingdentalutil_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](predictingdentalutil_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
 Here we see that the sensitivity of this model has improved slightly but
-it is still quite low. The accuracy has gone up to 88% which is quite
-high. We will discuss this further in the conclusion section.
+it is still quite low. The accuracy has gone up slightly as well but was
+high to begin with. We will discuss this further in the conclusion
+section.
 
 Now, we take a small sample of our data and visualize a random forest
 using the 20 most important features jsut to verify that our algorithm
 is working sensibly. First, we use a function to draw a dendrogram. Then
 we take a sample of 100 rows randomly and then plot the dendrogram.
 
-``` r
-set.seed(1212)
-
-  to.dendrogram <- function(dfrep,rownum=1,height.increment=0.1){
-
-  if(dfrep[rownum,'status'] == -1){
-    rval <- list()
-
-    attr(rval,"members") <- 1
-    attr(rval,"height") <- 0.0
-    attr(rval,"label") <- dfrep[rownum,'prediction']
-    attr(rval,"leaf") <- TRUE
-
-  }else{##note the change "to.dendrogram" and not "to.dendogram"
-    left <- to.dendrogram(dfrep,dfrep[rownum,'left daughter'],height.increment)
-    right <- to.dendrogram(dfrep,dfrep[rownum,'right daughter'],height.increment)
-    rval <- list(left,right)
-
-    attr(rval,"members") <- attr(left,"members") + attr(right,"members")
-    attr(rval,"height") <- max(attr(left,"height"),attr(right,"height")) + height.increment
-    attr(rval,"leaf") <- FALSE
-    attr(rval,"edgetext") <- dfrep[rownum,'split var']
-    #To add Split Point in Dendrogram
-    #attr(rval,"edgetext") <- paste(dfrep[rownum,'split var'],"\n<",round(dfrep[rownum,'split point'], digits = 2),"=>", sep = " ")
-  }
-
-  class(rval) <- "dendrogram"
-
-  return(rval)
-  }
-  
-sample <- training[sample(nrow(training), 190), ]
-model_rf2 <- randomForest(logit_Q1 ~ age + region + FPL_I2 + A1_GRADE + FORMTYPE + FPL_I5 + FPL_I6 + FPL_I3 + FPL_I4 + FPL_I6 + mental + fpl + physical + TOTAGE_0_5 + race + HHCOUNT + insurance + docroom + TENURE + hcability, data = sample)
-tree <- getTree(model_rf2,1,labelVar=TRUE)
-d <- to.dendrogram(tree)
-plot(d,center=TRUE,leaflab='none',edgePar=list(t.cex=1,p.col=NA,p.lty=0))
-```
-
-![](12-13project_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](predictingdentalutil_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 It appears that our random forest and overall data feeding mechanism is
 successful.
@@ -886,12 +1240,11 @@ successful.
 ## Conclusion
 
 When we compare the accuracy for the logistic regression to that of the
-random forest we see an accuracy of 0.8492 versus 0.8623. These are
-quite similar and do not indicate a significantly better performance of
-either classification algorithm. The sensitivity of both methods is
-significantly higher than the specificity (which are quite low for
-both). In this context, this is not great because we may be interested
-in using this to identify children who are at high risk of
+random forest they are quite similar and do not indicate a significantly
+better performance of either classification algorithm. The sensitivity
+of both methods is significantly higher than the specificity (which are
+quite low for both). In this context, this is not great because we may
+be interested in using this to identify children who are at high risk of
 underutilizing dental care. Clinicians, third part care apps, insurance
 companies may be able to reach out to individuals and encourage them to
 seek care more preventatively. Neither model suggested that child’s
@@ -914,7 +1267,9 @@ time, I would likely look into machine learning methods particularly
 geared towards rarer outcomes. I would also try to impute the missing
 data from the original dataset since we lost about 200+ variables due to
 missingness. Full access to the available features may provide better
-sensitivity for this model.
+sensitivity for this model. More generally, we see that the machine
+learning model would need to be more advanced to be particularly better
+than a logistic model for this data.
 
 ## References
 
@@ -972,10 +1327,8 @@ sensitivity for this model.
 # Appendix
 
 ``` r
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(haven)
-library(knitr)
-library(kableExtra)
 library(dplyr)
 library(car)
 library(jtools)
@@ -989,13 +1342,21 @@ library(gtsummary)
 library(glmnet)
 library(vip)
 library(pander)
+library(kableExtra)
 library(ConfusionTableR)
 library(table1)
-nsch2020 <- read_sas("~/Downloads/nsch_2020_topical_SAS/nsch_2020_topical.sas7bdat",NULL)
-x_2020 <- nsch2020[, which(colMeans(is.na(nsch2020)) == 0)]
-x_2020$logit_Q1 <- ifelse(nsch2020$K4Q30_R == 1 | nsch2020$K4Q30_R == 2, 1, 0)
+################################################################################
+# Load the dataset #
+################################################################################
+# Import NSCH demographic data
+nsch2020 <- read_sas("nsch_2020_topical.sas7bdat",NULL)
+################################################################################
+# Data Wrangling #
+
+nsch2020$logit_Q1 <- ifelse(nsch2020$K4Q30_R == 1 | nsch2020$K4Q30_R == 2, 1, 0)
+x_2020 <- data.frame(nsch2020$SC_CSHCN)
 x_2020$SC_CSHCN <- ifelse(nsch2020$SC_CSHCN==1, 1, 0)
-x_2020$age <- nsch2020$SC_AGE_YEARS
+x_2020$age <- nsch2020$SC_AGE_YEARS 
 x_2020$fpl <- nsch2020$FPL_I1
 x_2020$sex <- ifelse(nsch2020$SC_SEX == 1, 1, 0)
 
@@ -1015,13 +1376,15 @@ x_2020$regionori <- NULL
 x_2020$region_ori <- NULL
 x_2020$nsch2020.SC_CSHCN <- NULL
 
+x_2020$logit_Q1 <- nsch2020$logit_Q1
+
 x_2020$HHID <- nsch2020$HHID
 x_2020$STRATUM <- nsch2020$STRATUM
 x_2020$FIPSST <- nsch2020$FIPSST
 x_2020$FWC <- nsch2020$FWC
 x_2020$lang <- nsch2020$HHLANGUAGE
 
-###additional variables for specifiying SHCN 
+###additional variables for specificying SHCN 
 x_2020$autism <- nsch2020$K2Q35A
 x_2020$downsyn <- nsch2020$K2Q35A
 x_2020$add <- nsch2020$K2Q31A
@@ -1038,11 +1401,45 @@ x_2020$allergies <- nsch2020$ALLERGIES
 x_2020$docroom <- nsch2020$DOCROOM
 x_2020$hcability <- nsch2020$HCABILITY
 
-x_2020 <- x_2020[x_2020$age > 1,]
+################################################################################
+nschAnalysis <- x_2020
+nschAnalysis$logit_Q1 <- factor(nschAnalysis$logit_Q1, labels = c("Did Not Utilize", "Utilized"))
+nschAnalysis$sex <- factor(nschAnalysis$sex, labels = c("Male", "Female"))
+nschAnalysis$insurance <- factor(nschAnalysis$insurance)
+nschAnalysis$race <- factor(x_2020$race, labels = c("White Non-Hispanic", "Black Non-Hispanic", "American Indian Alaskan Native Non-Hispanic", "Asian Non-Hispanic", "Native Hawaiian Other Pacific Islander Non-Hispanic", "Hispanic", "Other/Missing"))
+nschAnalysis$married <- factor(nschAnalysis$married, labels = c("Married/Living with Partner", "Single/Never Married ", "Divorced/Widowed/Separated"))
+nschAnalysis$region <- factor(nschAnalysis$region, labels = c("Northeast", "Midwest", "South", "West", "Missing"))
+
+nschAnalysis$edu <- factor(nschAnalysis$edu, labels = c("Less than high school","High school", "More than high school"))
+nschAnalysis$mental <- nschAnalysis$mental
+nschAnalysis$physical <- nschAnalysis$physical
+nschAnalysis$SC_CSHCN <- factor(nschAnalysis$SC_CSHCN, labels = c("No SHCN", "Yes SCHN"))
+nschAnalysis$employ<- factor(nschAnalysis$employ, labels = c("Not employed", "At least 1 parent employed"))
+nschAnalysis$lang <- factor(nschAnalysis$lang, labels = c("English is primary language", "Spanish is primary language", "Another language is primary language"))
+nschAnalysis <- nschAnalysis[nschAnalysis$age > 1,]
+label(nschAnalysis$SC_CSHCN) <- "Special Health Care Needs Status"
+label(nschAnalysis$age) <- "Age (yrs)"
+label(nschAnalysis$fpl) <- "Federal Poverty Level"
+label(nschAnalysis$sex) <- "Sex of Adolescent"
+label(nschAnalysis$insurance) <- "Insurance Coverage Level"
+label(nschAnalysis$race) <- "Race/Ethnicity"
+label(nschAnalysis$married) <- "Primary Caregiver Marital Status"
+label(nschAnalysis$region) <- "Region"
+label(nschAnalysis$lang) <- "Primary Language Spoken at Home"
+label(nschAnalysis$employ) <- "Primary Caregiver Employment Status"
+label(nschAnalysis$employ) <- "Primary Caregiver Employment Level"
+label(nschAnalysis$physical) <- "Primary Caregiver Physical Health Level"
+label(nschAnalysis$edu) <- "Primary Caregiver Education Level"
+
+table1(~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + mental + physical + edu  | logit_Q1, data=nschAnalysis) %>% kable()
+################################################################################
+#plots
+
 Q1_2020 <- x_2020 %>% filter(!is.na(SC_CSHCN) ) %>%
   filter(!is.na(logit_Q1)) %>% 
   mutate(cshcn= ifelse(SC_CSHCN==1, "CSHCN" , "Non-CSHCN")) %>% 
-  mutate(Q = ifelse(logit_Q1 ==1, "Yes", "No"))  
+  mutate(Q = ifelse(logit_Q1 == 1, "Yes", "No"))  
+
 PP2 <- Q1_2020 %>% ggplot(aes(x = as.factor(cshcn), fill= as.factor(Q))) +
   geom_bar(position = position_stack(), aes(group = as.factor(Q))) +
   geom_text(stat = "count", aes(label = after_stat(count)), position = position_stack(vjust = 0.5), size = 2.5) +
@@ -1072,15 +1469,58 @@ arrange1<- ggarrange(PP1, PP2,  common.legend = TRUE, legend = "bottom")
 annotate_figure(arrange1,
                top = text_grob("Dental Care Utilization in the Past Year", color = "orange", size = 13),
                left = text_grob("Count", rot = 90)) 
+###Resetting original data without modifications for table 1/graphing 
+rm(x_2020)
+rm(nschAnalysis)
+x_2020 <- data.frame(nsch2020$SC_CSHCN)
+x_2020$SC_CSHCN <- ifelse(nsch2020$SC_CSHCN==1, 1, 0)
+x_2020$age <- nsch2020$SC_AGE_YEARS  #remove age<1
+x_2020$fpl <- nsch2020$FPL_I1
+x_2020$sex <- ifelse(nsch2020$SC_SEX == 1, 1, 0)
 
-set.seed(1212)
-nschAnalysis <- x_2020
+x_2020$insurance <- ifelse(nsch2020$CURRCOV == 2, 4, 
+                 ifelse(nsch2020$K12Q12 == 1, 1, 
+                 ifelse(nsch2020$K12Q03 == 1 | nsch2020$K12Q04 == 1, 2, 
+                 ifelse(nsch2020$K11Q03R == 1 | nsch2020$HCCOVOTH == 1 | nsch2020$TRICARE == 1 | nsch2020$CURRCOV == 1, 3, 0))))
+
+x_2020$race <- ifelse(!nsch2020$SC_HISPANIC_R == 1, nsch2020$SC_RACE_R, 6)
+x_2020$married <- ifelse(nsch2020$A1_MARITAL == 1 |nsch2020$A1_MARITAL == 2, 1, ifelse(nsch2020$A1_MARITAL == 3 |nsch2020$A1_MARITAL == 4, 2, 3))
+
+x_2020$regionori <- nsch2020$FIPSST
+
+x_2020$region <- ifelse(x_2020$regionori %in% c(9, 23, 25, 33, 44, 50, 34, 36, 42), 1, ifelse(x_2020$regionori %in% c(18, 17, 26, 39, 55, 19, 31, 20, 38, 27, 46, 29), 2, ifelse(x_2020$regionori %in% c(10, 11, 12, 13, 24, 37, 45, 51, 54, 1, 21, 28, 47, 5, 22, 40, 48), 3, ifelse(x_2020$regionori %in% c(4, 8, 16, 35, 30, 49, 32, 56, 2, 6, 15, 41, 53), 4, 0))))
+
+x_2020$regionori <- NULL
+x_2020$region_ori <- NULL
+x_2020$nsch2020.SC_CSHCN <- NULL
+
+x_2020$logit_Q1 <- nsch2020$logit_Q1
+
+x_2020$HHID <- nsch2020$HHID
+x_2020$STRATUM <- nsch2020$STRATUM
+x_2020$FIPSST <- nsch2020$FIPSST
+x_2020$FWC <- nsch2020$FWC
+x_2020$lang <- nsch2020$HHLANGUAGE
+
+###additional variables for specificying SHCN 
+x_2020$autism <- nsch2020$K2Q35A
+x_2020$downsyn <- nsch2020$K2Q35A
+x_2020$add <- nsch2020$K2Q31A
+
+x_2020$employ <- ifelse(nsch2020$A1_EMPLOYED == 1 | nsch2020$A1_EMPLOYED == 2, 1, 0)
+x_2020$married <- ifelse(nsch2020$A1_MARITAL == 1 |nsch2020$A1_MARITAL == 2, 1, ifelse(nsch2020$A1_MARITAL == 3 |nsch2020$A1_MARITAL == 4, 2, 3))
+x_2020$mental <- nsch2020$A1_MENTHEALTH
+x_2020$physical <- nsch2020$A1_PHYSHEALTH
+x_2020$edu <- nsch2020$HIGRADE
+
+nschAnalysis <- as.data.frame(x_2020)
 nschAnalysis$logit_Q1 <- as.factor(nschAnalysis$logit_Q1)
 nschAnalysis$sex <- as.factor(nschAnalysis$sex)
 nschAnalysis$insurance <- as.factor(nschAnalysis$insurance)
 nschAnalysis$race <- as.factor(nschAnalysis$race)
 nschAnalysis$married <- as.factor(nschAnalysis$married)
 nschAnalysis$region <- as.factor(nschAnalysis$region)
+nschAnalysis$agecat<-cut(nschAnalysis$age, c(0,1,12,18))
 nschAnalysis$lang <- as.factor(nschAnalysis$lang)
 
 nschAnalysis$edu <- as.factor(nschAnalysis$edu)
@@ -1088,22 +1528,23 @@ nschAnalysis$mental <- as.factor(nschAnalysis$mental)
 nschAnalysis$physical <- as.factor(nschAnalysis$physical)
 nschAnalysis$employ<-as.factor(nschAnalysis$employ)
 nschAnalysis$lang <- as.factor(nschAnalysis$lang)
+nschAnalysis <- nschAnalysis[nschAnalysis$age > 1,]
+nschAnalysis <- nschAnalysis[complete.cases(nschAnalysis), ]
 
-nschAnalysis <- nschAnalysis[complete.cases(nschAnalysis),]
-dim(nschAnalysis)
-table1(~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + edu  | logit_Q1, data=nschAnalysis)
-intrain <- caret::createDataPartition(y = nschAnalysis$logit_Q1, p= 0.6, list = FALSE)
+
+set.seed(1111)
+intrain <- createDataPartition(y = nschAnalysis$logit_Q1, p= 0.6, list = FALSE)
 training <- nschAnalysis[intrain,]
 testing <- nschAnalysis[-intrain,]
-##LOGISTIC REGRESSION
+
 x <- model.matrix(logit_Q1~ SC_CSHCN + age + fpl + sex + insurance + race + married + region + lang + employ + edu, training)
 # Convert the outcome (class) to a numerical variable
 y <- ifelse(training$logit_Q1 == "1", 1, 0)
 cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
-plot(cv.lasso)
 
 # Fit the final model on the training data
 model <- glmnet(x, y, alpha = 1, family = "binomial", lambda = cv.lasso$lambda.min)
+
 # Display regression coefficients
 c <- data.frame(coef.name = dimnames(coef(model))[[1]], coef.value = matrix(coef(model)))
 c[-2,]%>% kable()
@@ -1124,12 +1565,23 @@ ConfusionTableR::binary_visualiseR(train_labels = predicted$class_preds,
                                    quadrant_col2 = "#4397D2", 
                                    custom_title = "Dental Care Utilization Confusion Matrix", 
                                    text_col= "black")
+###Setting up larger data set for random forest 
+rm(x_2020)
+rm(nschAnalysis)
+xx <- as.data.frame(nsch2020[ , colSums(is.na(nsch2020)) == 0])
+xx$logit_Q1 <- nsch2020$logit_Q1
+nschAnalysis <- xx
+nschAnalysis <- nschAnalysis[nschAnalysis$SC_AGE_YEARS > 1,]
+nschAnalysis <- nschAnalysis[complete.cases(nschAnalysis), ]
+nschAnalysis$logit_Q1 <- as.factor(nschAnalysis$logit_Q1)
 
+set.seed(1111)
+intrain <- createDataPartition(y = nschAnalysis$logit_Q1, p= 0.6, list = FALSE)
+training <- nschAnalysis[intrain,]
+testing <- nschAnalysis[-intrain,]
 
-# prop.table(table(nschAnalysis$logit_Q1))
-# colnames(nschAnalysis)
-##RANDOM FOREST 
-model_rf <- randomForest(logit_Q1 ~ . -SC_AGE_YEARS - HHID - FWC - STRATUM - FIPSST, data = training)
+##RANDOM FOREST with ID covariates removed 
+model_rf <- randomForest(logit_Q1 ~ . -FWC - HHID, data = training)
 pred <- predict(model_rf, testing)
 predicted <- as.data.frame(cbind(class_preds=as.factor(pred), Class = as.factor(testing$logit_Q1)))
 predicted$class_preds <- as.factor(predicted$class_preds)
@@ -1188,8 +1640,8 @@ set.seed(1212)
   return(rval)
   }
   
-sample <- training[sample(nrow(training), 190), ]
-model_rf2 <- randomForest(logit_Q1 ~ age + region + FPL_I2 + A1_GRADE + FORMTYPE + FPL_I5 + FPL_I6 + FPL_I3 + FPL_I4 + FPL_I6 + mental + fpl + physical + TOTAGE_0_5 + race + HHCOUNT + insurance + docroom + TENURE + hcability, data = sample)
+sample <- training[sample(nrow(training), 100), ]
+model_rf2 <- randomForest(logit_Q1 ~ . -FWC - HHID, data = sample)
 tree <- getTree(model_rf2,1,labelVar=TRUE)
 d <- to.dendrogram(tree)
 plot(d,center=TRUE,leaflab='none',edgePar=list(t.cex=1,p.col=NA,p.lty=0))
