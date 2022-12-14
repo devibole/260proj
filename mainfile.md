@@ -3,10 +3,6 @@ Predicting Dental Care Utilization (260 Final Project)
 Devika Godbole
 2022-12-14
 
-``` r
-knitr::opts_chunk$set(echo = FALSE)
-```
-
 ## Introduction
 
 One in every five children experience special healthcare needs in the
@@ -86,8 +82,6 @@ available features however. Confusion matrices were created for the test
 set predictions for each model and the metrics were compared.
 
 ## Analysis
-
-We begin with a Table 1 to understand the population.
 
 <table>
 <thead>
@@ -895,11 +889,14 @@ Primary Caregiver Education Level
 </tr>
 </tbody>
 </table>
+Table 1. Sociodemographic data stratified by dental care utilization status
 
-We generate some explanatory plots based on descriptive variables and
+
+
+Now, we generate some explanatory plots based on descriptive variables and
 the outcome, dental care utilization within the past 12 months.
 
-![](figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![Figure 1. Dental Care Utilization Stratified by Special Health Care Need Status](figure-gfm/unnamed-chunk-6-1.png)<!-- -->![Figure 2. Racial/Ethnic Stratification of Dental Care Utilization](figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ## Results
 
@@ -1206,10 +1203,12 @@ edu3
 </tr>
 </tbody>
 </table>
+Table 2. Coefficients from Logistic Model 
 
-![](figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![Figure 3. Confusion Matrix for Logistic Model Predictions](figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+![Figure 4. Variable Importance Plot from Logistic Model](figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Here, we see that the sensitivity of this model is incredibly low. The
 accuracy is quite high and the specificity is quite high as well. We
@@ -1221,7 +1220,7 @@ variables. We build a confusion matrix and visualize this matrix. The
 function also presents the sensitivity, accuracy, specificity of our
 model. We also plot the top 20 important features based on Gini index.
 
-![](figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![Figure 5. Confusion Matrix for Random Forest Model Predictions](figure-gfm/unnamed-chunk-10-1.png)<!-- -->![Figure 6. Feature Importance Plot Using Gini Index](figure-gfm/unnamed-chunk-10-2.png)<!-- -->
 
 Here we see that the sensitivity of this model has improved slightly but
 it is still quite low. The accuracy has gone up slightly as well but was
@@ -1229,11 +1228,11 @@ high to begin with. We will discuss this further in the conclusion
 section.
 
 Now, we take a small sample of our data and visualize a random forest
-using the 20 most important features jsut to verify that our algorithm
+using the 20 most important features just to verify that our algorithm
 is working sensibly. First, we use a function to draw a dendrogram. Then
 we take a sample of 100 rows randomly and then plot the dendrogram.
 
-![](figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![Figure 7. Sample Dendrogram](figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 It appears that our random forest and overall data feeding mechanism is
 successful.
