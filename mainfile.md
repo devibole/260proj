@@ -186,16 +186,16 @@ Age (yrs)
 </tr>
 <tr>
 <td style="text-align:left;">
-  Median \[Min, Max\]
+  Median [Min, Max]
 </td>
 <td style="text-align:left;">
-6.00 \[2.00, 17.0\]
+6.00 [2.00, 17.0]
 </td>
 <td style="text-align:left;">
-11.0 \[2.00, 17.0\]
+11.0 [2.00, 17.0]
 </td>
 <td style="text-align:left;">
-11.0 \[2.00, 17.0\]
+11.0 [2.00, 17.0]
 </td>
 </tr>
 <tr>
@@ -225,16 +225,16 @@ Federal Poverty Level
 </tr>
 <tr>
 <td style="text-align:left;">
-  Median \[Min, Max\]
+  Median [Min, Max]
 </td>
 <td style="text-align:left;">
-239 \[50.0, 400\]
+239 [50.0, 400]
 </td>
 <td style="text-align:left;">
-348 \[50.0, 400\]
+348 [50.0, 400]
 </td>
 <td style="text-align:left;">
-332 \[50.0, 400\]
+332 [50.0, 400]
 </td>
 </tr>
 <tr>
@@ -761,16 +761,16 @@ mental
 </tr>
 <tr>
 <td style="text-align:left;">
-  Median \[Min, Max\]
+  Median [Min, Max]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 </tr>
 <tr>
@@ -814,16 +814,16 @@ Primary Caregiver Physical Health Level
 </tr>
 <tr>
 <td style="text-align:left;">
-  Median \[Min, Max\]
+  Median [Min, Max]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 <td style="text-align:left;">
-2.00 \[1.00, 5.00\]
+2.00 [1.00, 5.00]
 </td>
 </tr>
 <tr>
