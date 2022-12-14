@@ -1,4 +1,4 @@
-Predicting Dental Care Utilization (270 Final Project)
+Predicting Dental Care Utilization (260 Final Project)
 ================
 Devika Godbole
 2022-12-14
