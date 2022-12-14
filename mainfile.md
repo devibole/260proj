@@ -1222,6 +1222,7 @@ function also presents the sensitivity, accuracy, specificity of our
 model. We also plot the top 20 important features based on Gini index.
 
 ![](figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+
 Here we see that the sensitivity of this model has improved slightly but
 it is still quite low. The accuracy has gone up slightly as well but was
 high to begin with. We will discuss this further in the conclusion
